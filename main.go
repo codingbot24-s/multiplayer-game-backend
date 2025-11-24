@@ -1,7 +1,9 @@
 package main
 
-import "mmo-backend/helper"
+import (
+	"mmo-backend/router"
+)
 
 func main() {
-	helper.StartRouter()
+	router.StartRouter()
 }
