@@ -1,8 +1,11 @@
 package helper
 
 import (
+	"fmt"
 	"log"
+	atypes "mmo-backend/types"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
 )
 
@@ -28,4 +31,28 @@ func NewConfig() {
 
 func GetConfig() *Config {
 	return &Config{}
+}
+
+// check the user token and return the claims
+
+func VerifyTheToken(t string) (atypes.MyClaims, error) {
+	secret := GetConfig()
+	token, err := jwt.ParseWithClaims(t, &atypes.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		// Validate signing algorithm
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret.JwtSecret), nil
+	})
+
+	if err != nil {
+		return atypes.MyClaims{}, fmt.Errorf("error parsing token: %v", err)
+	}
+
+	claims, ok := token.Claims.(*atypes.MyClaims)
+	if !ok || !token.Valid {
+
+	}
+
+	return *claims, nil
 }

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"mmo-backend/helper"
 	atypes "mmo-backend/types"
 	"strings"
@@ -14,6 +13,9 @@ import (
 
 var validate *validator.Validate
 
+var zoneMap = make(map[string]string)
+
+// Login and generate the jwt
 func LoginHandler(c *fiber.Ctx) error {
 	var req atypes.LoginRequest
 	// parse the request body
@@ -31,7 +33,7 @@ func LoginHandler(c *fiber.Ctx) error {
 			"detail":  "error validating request body",
 		})
 	}
-	claims := &MyClaims{
+	claims := &atypes.MyClaims{
 		Username: req.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
@@ -48,6 +50,8 @@ func LoginHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	zoneMap[req.Username] = "ws://localhost:4000"
+
 	return c.Status(200).JSON(fiber.Map{
 		"message": "success",
 		"token":   ss,
@@ -55,13 +59,7 @@ func LoginHandler(c *fiber.Ctx) error {
 
 }
 
-type MyClaims struct {
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
-
 func LoginCheck(c *fiber.Ctx) error {
-	secret := helper.GetConfig()
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -77,25 +75,11 @@ func LoginCheck(c *fiber.Ctx) error {
 	}
 
 	t := parts[1]
-	token, err := jwt.ParseWithClaims(t, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// Validate signing algorithm
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(secret.JwtSecret), nil
-	})
-
+	claims, err := helper.VerifyTheToken(t)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "token parsing error",
-			"error":   err.Error(),
-		})
-	}
-
-	claims, ok := token.Claims.(*MyClaims)
-	if !ok || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "invalid token",
+			"message": err.Error(),
+			"detail":  "cannot verify the token",
 		})
 	}
 	return c.Status(200).JSON(fiber.Map{
@@ -103,4 +87,41 @@ func LoginCheck(c *fiber.Ctx) error {
 		"claims":  claims.Username,
 	})
 
+}
+
+func SessionHandler(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Missing Authorization header",
+		})
+	}
+
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Invalid Authorization header format",
+		})
+	}
+
+	t := parts[1]
+	claims, err := helper.VerifyTheToken(t)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": err.Error(),
+			"detail":  "cannot verify the token",
+		})
+	}
+
+	zone, ok := zoneMap[claims.Username]
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Username not found in zone",
+		})
+	}
+	return c.Status(200).JSON(fiber.Map{
+		"message": "success",
+		"claims":  claims.Username,
+		"zone":    zone,
+	})
 }
