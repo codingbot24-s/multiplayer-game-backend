@@ -120,6 +120,11 @@ func SessionHandler(c *fiber.Ctx) error {
 			"message": "Username not found in zone",
 		})
 	}
+	// TODO: we need to connect to this zone
+	// url := fmt.Sprintf("%s/ws",zone)
+	// how to connect to websocket
+	// some helper function that will do the request for us
+
 	return c.Status(200).JSON(fiber.Map{
 		"message": "success",
 		"claims":  claims.Username,

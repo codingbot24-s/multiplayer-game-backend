@@ -1,6 +1,7 @@
 package zonehelper
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/codingbot24-s/helper"
@@ -41,11 +42,7 @@ func StartWebSocket() {
 		return fiber.ErrUpgradeRequired
 	})
 	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
-		mes := []byte("hello websocket")
-		if err := c.WriteMessage(websocket.TextMessage, mes); err != nil {
-			c.Close()
-			return
-		}
+		fmt.Println("client connected")	
 	}))
 
 	// start the websocket on 4000

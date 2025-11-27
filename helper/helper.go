@@ -2,10 +2,13 @@ package helper
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	atypes "github.com/codingbot24-s/types"
+	"github.com/fasthttp/websocket"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
-	"log"
 )
 
 type Config struct {
@@ -54,4 +57,20 @@ func VerifyTheToken(t string) (atypes.MyClaims, error) {
 	}
 
 	return *claims, nil
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func ConnectToWS(zone string, r *http.Request, w http.ResponseWriter) error {
+	// here we need to connect to websocket
+	_, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return fmt.Errorf("error upgrading to websocket")
+	}
+
+	// is this the right thing to do here ?
+	return nil
 }
