@@ -12,6 +12,7 @@ import (
 func StartWebSocket() {
 	app := fiber.New()
 	app.Use("/ws", func(c *fiber.Ctx) error {
+
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)
 			authHeader := c.Get("Authorization")
@@ -41,10 +42,10 @@ func StartWebSocket() {
 		}
 		return fiber.ErrUpgradeRequired
 	})
-	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
-		fmt.Println("client connected")	
+	app.Get("/ping", websocket.New(func(c *websocket.Conn) {
+		fmt.Println("player connected ")
 	}))
 
-	// start the websocket on 4000
+	// start the websocket fon 4000
 	app.Listen(":4000")
 }

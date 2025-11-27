@@ -51,7 +51,7 @@ func LoginHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	zoneMap[req.Username] = "ws://localhost:4000"
+	zoneMap[req.Username] = "ws://localhost:4000/ping"
 
 	return c.Status(200).JSON(fiber.Map{
 		"message": "success",
@@ -120,10 +120,14 @@ func SessionHandler(c *fiber.Ctx) error {
 			"message": "Username not found in zone",
 		})
 	}
+
 	// TODO: we need to connect to this zone
-	// url := fmt.Sprintf("%s/ws",zone)
-	// how to connect to websocket
-	// some helper function that will do the request for us
+	if err := helper.ConnectToWS(zone); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+			"detail":  "cannot connect to websocket",
+		})
+	}
 
 	return c.Status(200).JSON(fiber.Map{
 		"message": "success",

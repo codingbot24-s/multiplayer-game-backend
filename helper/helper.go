@@ -3,7 +3,6 @@ package helper
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	atypes "github.com/codingbot24-s/types"
 	"github.com/fasthttp/websocket"
@@ -64,13 +63,14 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func ConnectToWS(zone string, r *http.Request, w http.ResponseWriter) error {
+func ConnectToWS(zone string) error {
 	// here we need to connect to websocket
-	_, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		return fmt.Errorf("error upgrading to websocket")
-	}
 
-	// is this the right thing to do here ?
+	conn, _, err := websocket.DefaultDialer.Dial(zone, nil)
+	if err != nil {
+		return fmt.Errorf("error connecting to WebSocket: %v", err)
+	}
+	defer conn.Close()
+
 	return nil
 }
