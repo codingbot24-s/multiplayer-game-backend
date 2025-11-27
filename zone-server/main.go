@@ -1,9 +1,7 @@
 package main
 
-import (
-	zonehelper "github.com/codingbot24-s/zone-server/helper"
-)
+import "github.com/codingbot24-s/zone-server/router"
 
 func main() {
-	zonehelper.StartWebSocket()
+	router.StartWebSocket()
 }

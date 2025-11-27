@@ -12,3 +12,14 @@ type MyClaims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
+
+// player struct
+type Player struct {
+	Username string `json:"username"`
+}
+
+//
+
+func NewPlayer(username string) *Player {
+	return &Player{Username: username}
+}
