@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mmo-backend/router"
+	"github.com/codingbot24-s/player/router"
 )
 
 func main() {

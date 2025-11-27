@@ -3,8 +3,8 @@ package router
 import (
 	"fmt"
 	"log"
-	"mmo-backend/handler"
 
+	"github.com/codingbot24-s/player/handler"
 	"github.com/gofiber/fiber/v2"
 )
 

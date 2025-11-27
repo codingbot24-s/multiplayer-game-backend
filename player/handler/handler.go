@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"mmo-backend/helper"
-	atypes "mmo-backend/types"
 	"strings"
 	"time"
 
+	"github.com/codingbot24-s/helper"
+	atypes "github.com/codingbot24-s/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -42,6 +42,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	secret := helper.GetConfig()
+
 	ss, err := token.SignedString([]byte(secret.JwtSecret))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

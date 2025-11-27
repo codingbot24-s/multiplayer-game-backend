@@ -2,11 +2,10 @@ package helper
 
 import (
 	"fmt"
-	"log"
-	atypes "mmo-backend/types"
-
+	atypes "github.com/codingbot24-s/types"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
+	"log"
 )
 
 type Config struct {
@@ -16,7 +15,7 @@ type Config struct {
 
 func NewConfig() {
 	// we can create a new config user viper
-	viper.SetConfigName(".env")
+	viper.SetConfigName("env")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 
