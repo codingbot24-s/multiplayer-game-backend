@@ -13,6 +13,28 @@ type CreateRoomReq struct {
 }
 
 func CreateRoom(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Missing Authorization header",
+		})
+	}
+
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Invalid Authorization header format",
+		})
+	}
+
+	t := parts[1]
+	_, err := helper.VerifyTheToken(t)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": err.Error(),
+			"detail":  "cannot verify the token",
+		})
+	}
 	var req CreateRoomReq
 	if err := c.BodyParser(&req); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
