@@ -7,7 +7,6 @@ import (
 )
 
 // global player map
-
 var PMap = make(map[string]*atypes.Player)
 
 func AddPlayer(name string) {

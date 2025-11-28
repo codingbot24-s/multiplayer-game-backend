@@ -12,6 +12,7 @@ func StartRouter() {
 
 	app.Post("/room/create", roomHandler.CreateRoom)
 	app.Post("room/join", roomHandler.JoinRoom)
+
 	fmt.Println("room server running on 5000")
 	app.Listen(":5000")
 }

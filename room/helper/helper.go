@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/fasthttp/websocket"
 	"github.com/google/uuid"
 )
 
@@ -11,13 +12,14 @@ type RoomManager struct {
 	// storeRoomId with actual room
 	RoomMap map[string]*Room
 }
-
+// the player in room will have an websocket connection
 type Room struct {
 	RoomName string
-	// Player struct with websocket
-	Players []string
+	// Player who has joined 
+	Players map[string]bool
+	// players that are connected via websocket
+	Connection map[string]*websocket.Conn
 
-	// map[player]wsconn
 }
 
 var (
@@ -62,7 +64,15 @@ func NewRoom(name string) *Room {
 	return &r
 }
 
-// AddInto will add player into room
-func (r *Room) AddInto(player string) {
-	r.Players = append(r.Players, player)
+// AddInto will add player into room 
+func (r *Room) AddInto(playerName string) {
+	r.Players[playerName] = true
+}
+
+func(r *Room) FindTheUser(userId string) (string,error) {
+	_,ok := r.Players[userId]
+	if ok {
+		return userId,nil
+	}
+	return "",fmt.Errorf("error user is not in the room")
 }

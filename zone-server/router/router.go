@@ -47,8 +47,9 @@ func StartWebSocket() {
 
 	// handlers
 	app.Get("/ping", websocket.New(handler.Pong))
-	// zone will need to use room here
-	app.Get("/:roomid/:playerId",)
+
+	// TODO: TEST THIS
+	app.Get("/ws/:roomid:/userid",websocket.New(handler.Pang))
 	// start the websocket fon 4000
 	if err := app.Listen(":4000"); err != nil {
 		log.Fatalln(err)

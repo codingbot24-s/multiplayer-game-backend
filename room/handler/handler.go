@@ -106,3 +106,4 @@ func JoinRoom(c *fiber.Ctx) error {
 		"message": "joined room with id " + req.RoomId,
 	})
 }
+
