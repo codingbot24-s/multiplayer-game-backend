@@ -49,7 +49,7 @@ func StartWebSocket() {
 	app.Get("/ping", websocket.New(handler.Pong))
 
 	// TODO: TEST THIS
-	app.Get("/ws/:roomid:/userid",websocket.New(handler.Pang))
+	app.Get("/ws/:roomid/:userid",websocket.New(handler.Pang))
 	// start the websocket fon 4000
 	if err := app.Listen(":4000"); err != nil {
 		log.Fatalln(err)
