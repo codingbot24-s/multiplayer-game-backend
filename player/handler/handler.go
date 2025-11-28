@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -121,8 +122,10 @@ func SessionHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	zoneWithParams := fmt.Sprintf("%s?username=%s", zone, claims.Username)
 	// TODO: we need to connect to this zone
-	if err := helper.ConnectToWS(zone); err != nil {
+	// we can spawn the goroutine here
+	if err := helper.ConnectToWS(zoneWithParams, claims.Username); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
 			"detail":  "cannot connect to websocket",
