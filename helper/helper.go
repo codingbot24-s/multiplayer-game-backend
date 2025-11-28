@@ -63,14 +63,27 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func ConnectToWS(zone string) error {
-	// here we need to connect to websocket
-
+func ConnectToWS(zone string, username string) error {
 	conn, _, err := websocket.DefaultDialer.Dial(zone, nil)
 	if err != nil {
 		return fmt.Errorf("error connecting to WebSocket: %v", err)
 	}
-	defer conn.Close()
+
+	// spawn the goroutine to handle that connection
+	go handleConnection(conn, username)
 
 	return nil
+}
+
+func handleConnection(conn *websocket.Conn, username string) {
+	defer func() {
+		conn.Close()
+	}()
+	for {
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("Connection closed for user %s: %v", username, err)
+			return
+		}
+	}
 }

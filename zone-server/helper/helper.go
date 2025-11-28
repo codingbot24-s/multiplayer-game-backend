@@ -14,3 +14,8 @@ func AddPlayer(name string) {
 	PMap[name] = atypes.NewPlayer(name)
 	fmt.Printf("Player with name %s connected", name)
 }
+
+func RemovePlayer(name string) {
+	delete(PMap, name)
+	fmt.Printf("Player with name %s disconnected", name)
+}

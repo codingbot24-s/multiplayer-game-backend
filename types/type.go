@@ -13,7 +13,7 @@ type MyClaims struct {
 	jwt.RegisteredClaims
 }
 
-// player struct
+// Player struct
 type Player struct {
 	Username string `json:"username"`
 }
