@@ -58,11 +58,6 @@ func VerifyTheToken(t string) (atypes.MyClaims, error) {
 	return *claims, nil
 }
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
 func ConnectToWS(zone string, username string) error {
 	conn, _, err := websocket.DefaultDialer.Dial(zone, nil)
 	if err != nil {

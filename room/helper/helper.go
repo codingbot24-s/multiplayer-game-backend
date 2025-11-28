@@ -8,13 +8,16 @@ import (
 )
 
 type RoomManager struct {
+	// storeRoomId with actual room
 	RoomMap map[string]*Room
 }
 
 type Room struct {
 	RoomName string
-	// Players name only
+	// Player struct with websocket
 	Players []string
+
+	// map[player]wsconn
 }
 
 var (

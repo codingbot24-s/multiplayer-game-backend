@@ -12,8 +12,7 @@ import (
 
 func StartWebSocket() {
 	app := fiber.New()
-
-	// websocket middleware
+	// websocket middleware request will get upgrade on this route
 	app.Use("/ws", func(c *fiber.Ctx) error {
 
 		if websocket.IsWebSocketUpgrade(c) {
@@ -48,7 +47,8 @@ func StartWebSocket() {
 
 	// handlers
 	app.Get("/ping", websocket.New(handler.Pong))
-
+	// zone will need to use room here
+	app.Get("/:roomid/:playerId",)
 	// start the websocket fon 4000
 	if err := app.Listen(":4000"); err != nil {
 		log.Fatalln(err)
