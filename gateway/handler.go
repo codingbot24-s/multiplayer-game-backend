@@ -102,8 +102,12 @@ func SessionHandler(ctx *fiber.Ctx) error {
 		})
 
 	}
+
+	zoneUrl := "ws://localhost:4000/ws"
+
 	return ctx.Status(200).JSON(fiber.Map{
 		"message": "success",
 		"claims":  claims.Username,
+		"zone":    zoneUrl,
 	})
 }
