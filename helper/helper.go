@@ -2,12 +2,9 @@ package helper
 
 import (
 	"fmt"
-	"log"
-
-	atypes "github.com/codingbot24-s/types"
-	"github.com/fasthttp/websocket"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
+	"log"
 )
 
 type Config struct {
@@ -32,53 +29,4 @@ func NewConfig() {
 
 func GetConfig() *Config {
 	return &Config{}
-}
-
-// check the user token and return the claims
-
-func VerifyTheToken(t string) (atypes.MyClaims, error) {
-	secret := GetConfig()
-	token, err := jwt.ParseWithClaims(t, &atypes.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// Validate signing algorithm
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(secret.JwtSecret), nil
-	})
-
-	if err != nil {
-		return atypes.MyClaims{}, fmt.Errorf("error parsing token: %v", err)
-	}
-
-	claims, ok := token.Claims.(*atypes.MyClaims)
-	if !ok || !token.Valid {
-
-	}
-
-	return *claims, nil
-}
-
-func ConnectToWS(zone string, username string) error {
-	conn, _, err := websocket.DefaultDialer.Dial(zone, nil)
-	if err != nil {
-		return fmt.Errorf("error connecting to WebSocket: %v", err)
-	}
-
-	// spawn the goroutine to handle that connection
-	go handleConnection(conn, username)
-
-	return nil
-}
-
-func handleConnection(conn *websocket.Conn, username string) {
-	defer func() {
-		conn.Close()
-	}()
-	for {
-		_, _, err := conn.ReadMessage()
-		if err != nil {
-			log.Printf("Connection closed for user %s: %v", username, err)
-			return
-		}
-	}
 }
