@@ -32,7 +32,7 @@ func Login(ctx *fiber.Ctx) error {
 		"token":   token,
 	})
 }
-
+// TODO: define a midlleware for all the protected routes
 func LoginCheck(ctx *fiber.Ctx) error {
 	authHeader := ctx.Get("Authorization")
 

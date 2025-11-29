@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/codingbot24-s/helper"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type MyClaims struct {
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
+
 
 func GenerateToken(username string) (string, error) {
-	claims := MyClaims{
+	claims := helper.MyClaims{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
@@ -29,8 +27,8 @@ func GenerateToken(username string) (string, error) {
 	}
 	return ss, nil
 }
-func VerifyTheToken(t string) (*MyClaims, error) {
-    token, err := jwt.ParseWithClaims(t, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+func VerifyTheToken(t string) (*helper.MyClaims, error) {
+    token, err := jwt.ParseWithClaims(t, helper.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
         if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
             return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
         }
@@ -39,7 +37,7 @@ func VerifyTheToken(t string) (*MyClaims, error) {
     if err != nil {
         return nil, fmt.Errorf("error parsing token: %v", err)
     }
-    claims, ok := token.Claims.(*MyClaims)
+    claims, ok := token.Claims.(*helper.MyClaims)
     if !ok || !token.Valid {
         return nil, fmt.Errorf("error token is not valid or cant extract claims")
     }
