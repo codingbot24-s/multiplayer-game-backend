@@ -8,8 +8,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
-
 func GenerateToken(username string) (string, error) {
 	claims := helper.MyClaims{
 		Username: username,
@@ -28,20 +26,20 @@ func GenerateToken(username string) (string, error) {
 	return ss, nil
 }
 func VerifyTheToken(t string) (*helper.MyClaims, error) {
-    token, err := jwt.ParseWithClaims(t, helper.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-        if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-            return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-        }
-        return []byte("1234"), nil
-    })
-    if err != nil {
-        return nil, fmt.Errorf("error parsing token: %v", err)
-    }
-    claims, ok := token.Claims.(*helper.MyClaims)
-    if !ok || !token.Valid {
-        return nil, fmt.Errorf("error token is not valid or cant extract claims")
-    }
-    
-    fmt.Printf("username is %s", claims.Username)
-    return claims, nil
+	token, err := jwt.ParseWithClaims(t, &helper.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte("1234"), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %v", err)
+	}
+	claims, ok := token.Claims.(*helper.MyClaims)
+	if !ok || !token.Valid {
+		return nil, fmt.Errorf("error token is not valid or cant extract claims")
+	}
+
+	fmt.Printf("username is %s", claims.Username)
+	return claims, nil
 }
