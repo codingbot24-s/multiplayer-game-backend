@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/codingbot24-s/auth"
@@ -32,8 +33,46 @@ func Login(ctx *fiber.Ctx) error {
 		"token":   token,
 	})
 }
+
 // TODO: define a midlleware for all the protected routes
 func LoginCheck(ctx *fiber.Ctx) error {
+	authHeader := ctx.Get("Authorization")
+
+	if authHeader == "" {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+
+			"message": "Missing Authorization header",
+		})
+	}
+
+	parts := strings.Split(authHeader, " ")
+
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+
+			"message": "Invalid Authorization header format",
+		})
+	}
+
+	t := parts[1]
+	fmt.Println(t)
+	claims, err := auth.VerifyTheToken(t)
+
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": err.Error(),
+			"detail":  "cannot verify the token",
+		})
+
+	}
+
+	return ctx.Status(200).JSON(fiber.Map{
+		"message": "success",
+		"claims":  claims.Username,
+	})
+}
+
+func SessionHandler(ctx *fiber.Ctx) error {
 	authHeader := ctx.Get("Authorization")
 
 	if authHeader == "" {
@@ -59,14 +98,12 @@ func LoginCheck(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": err.Error(),
-			"detail": "cannot verify the token",
+			"detail":  "cannot verify the token",
 		})
 
 	}
-
-	return ctx.Status(200).JSON(fiber.Map{	
+	return ctx.Status(200).JSON(fiber.Map{
 		"message": "success",
-		"claims": claims.Username,
-
+		"claims":  claims.Username,
 	})
 }

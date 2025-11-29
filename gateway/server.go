@@ -10,6 +10,7 @@ func StartRouter() {
 	app := fiber.New()
 	app.Post("/login", Login)
 	app.Get("/profile",LoginCheck)
+	app.Post("/session",SessionHandler)
 	if err := app.Listen(":3000"); err != nil {
 		log.Fatalf("erorr cant start server: %v", err)
 	}
