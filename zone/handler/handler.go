@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/codingbot24-s/helper"
 	"github.com/gorilla/websocket"
 )
 
@@ -16,14 +17,15 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 		log.Print("upgrade:", err)
 		return
 	}
-	defer c.Close()
 	fmt.Println("player connected ")
-	for {
-		_, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
+	ch := make(chan string)
+	go func () {
+		helper.HandleConnection(c,ch)
+	} ()	
+	// is this blocking yes it is 
+	message := <-ch
+	if message == "done" {
+		fmt.Println("player disconnected")
+		return
 	}
 }
