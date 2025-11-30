@@ -57,9 +57,12 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	zoneHelper.SendMessage(c, []byte(jsonString))
 	// build the snapshot data
 	snapShot := registry.BuildSnapShot()
+	wrappedSnapshot := zoneHelper.SnapShot{
+		Players: *snapShot,
+	}
 
 	// Marshal the snapshot to JSON
-	snapshotJSON, err := json.Marshal(snapShot)
+	snapshotJSON, err := json.Marshal(wrappedSnapshot)
 	if err != nil {
 		log.Printf("Error marshaling snapshot: %v", err)
 		return

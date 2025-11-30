@@ -13,6 +13,8 @@ type WorldMessage struct {
 }
 
 func SendMessage(conn *websocket.Conn, data []byte) {
+	jdata := string(data)
+	fmt.Println("sending message ", jdata)
 	var w_Message WorldMessage
 	if err := json.Unmarshal(data, &w_Message); err != nil {
 		fmt.Println("error unmarshalling world message")
@@ -37,7 +39,22 @@ func SendMessage(conn *websocket.Conn, data []byte) {
 			fmt.Println("error unmarshalling move request")
 			return
 		}
-		fmt.Println("move request ", moveReq.X, moveReq.Y)
+		err := conn.WriteJSON(moveReq)
+		if err != nil {
+			fmt.Println("error sending world message")
+			return
+		}
+	case "world_data":
+		var snapShot SnapShot
+		if err := json.Unmarshal(w_Message.Data, &snapShot); err != nil {
+			fmt.Println("error unmarshalling snapshot")
+			return
+		}
+		err := conn.WriteJSON(snapShot)
+		if err != nil {
+			fmt.Println("error sending world message")
+			return
+		}
 	default:
 
 	}
