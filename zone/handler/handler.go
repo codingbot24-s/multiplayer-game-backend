@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/codingbot24-s/helper"
 	zoneHelper "github.com/codingbot24-s/zone/helper"
 	"github.com/gorilla/websocket"
 )
@@ -42,7 +41,7 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	// this is a goroutine channel
 	ch := make(chan string)
 	go func() {
-		helper.HandleConnection(c, ch)
+		zoneHelper.HandleConnection(c, ch,name)
 	}()
 
 	// player disconnect block

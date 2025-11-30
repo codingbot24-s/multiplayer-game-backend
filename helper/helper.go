@@ -1,10 +1,8 @@
 package helper
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
 )
 
@@ -32,19 +30,4 @@ func GetConfig() *Config {
 	return &Config{}
 }
 
-// websocket helper
 
-func HandleConnection(c *websocket.Conn,ch chan string) {
-	defer func() {
-		c.Close()
-		ch <- "done"
-	}()
-	for {
-		_, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		fmt.Printf("recv: %s\n", message)
-	}	
-}
