@@ -55,3 +55,12 @@ func(r *Registry) BuildSnapShot() *[]Player {
 	}
 	return &snapShot
 }
+
+
+func (r *Registry) GetAllPlayers () []Player {
+	players := make([]Player, 0)
+	for _, p := range r.Pmap {
+		players = append(players, *p)
+	}
+	return players
+}

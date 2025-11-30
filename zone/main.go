@@ -11,6 +11,7 @@ import (
 
 func main() {
 	r := mux.NewRouter()
+	go zoneHelper.StartTicker()
 	zoneHelper.NewRegistry()
 	// connect to websocket server
 	r.HandleFunc("/ws", zoneHandler.Connect)

@@ -9,12 +9,12 @@ type Player struct {
 	Conn  *websocket.Conn `json:"-"`
 }
 
-func NewPlayer(name string) *Player {
+func NewPlayer(name string,conn *websocket.Conn) *Player {
 	p := Player{
 		Name: name,
 		X: 0,
 		Y: 0,
-		Conn: &websocket.Conn{},
+		Conn: conn,
 	}
 	return &p
 }

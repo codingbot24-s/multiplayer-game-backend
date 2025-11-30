@@ -25,19 +25,21 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get the registry
-	registry := zoneHelper.GetZoneRegistry()
-	// add the player in the registry
-	registry.AddPlayer(name, zoneHelper.NewPlayer(name))
-	fmt.Println("player connected with name ", name)
-	// check the registry
-	registry.Check()
-
+	
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
 		return
 	}
+	
+	// get the registry
+	registry := zoneHelper.GetZoneRegistry()
+	// add the player in the registry
+	registry.AddPlayer(name, zoneHelper.NewPlayer(name,c))
+	fmt.Println("player connected with name ", name)
+	// check the registry
+	registry.Check()
+
 
 	// this is a goroutine channel
 	ch := make(chan string)
