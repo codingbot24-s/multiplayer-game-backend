@@ -2,6 +2,8 @@ package auth
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/codingbot24-s/helper"
@@ -42,4 +44,28 @@ func VerifyTheToken(t string) (*helper.MyClaims, error) {
 
 	fmt.Printf("username is %s", claims.Username)
 	return claims, nil
+}
+
+func AuthMiddleware(w http.ResponseWriter, r *http.Request) *helper.MyClaims {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+		return nil
+	}
+	parts := strings.Split(authHeader, " ")
+
+	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+		http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+		return nil
+	}
+
+	token := parts[1]
+	claims, err := VerifyTheToken(token)
+
+	if err != nil {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return nil
+	}
+
+	return claims
 }
