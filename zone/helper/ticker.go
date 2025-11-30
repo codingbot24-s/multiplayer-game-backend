@@ -3,7 +3,6 @@ package zoneHelper
 import (
 	"time"
 
-	"github.com/gorilla/websocket"
 )
 
 func StartTicker() {
@@ -12,10 +11,10 @@ func StartTicker() {
 	for {
 		select {
 		case <-ticker.C :
-			// snapshot := zoneRegistery.BuildSnapShot()
+			snapshot := zoneRegistery.BuildSnapShot()
 			players := zoneRegistery.GetAllPlayers()
 			for _, p := range players {
-				p.Conn.WriteMessage(websocket.TextMessage,[]byte("hello player from ticker"))
+				p.Conn.WriteJSON(snapshot)
 			}
 		}
 	}
