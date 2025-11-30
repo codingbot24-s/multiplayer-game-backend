@@ -1,6 +1,7 @@
 package zoneHandler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,10 +42,34 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	// this is a goroutine channel
 	ch := make(chan string)
 	go func() {
-		zoneHelper.HandleConnection(c, ch,name)
+		zoneHelper.HandleConnection(c, ch, name)
 	}()
+	/*
+	{
+		"type": "move",
+		"data ": {
+			"x": 0,	
+			
+		}	
+	
+	}
+	*/
+
+	//TODO: Test struct send world message to player
+	jsonString := `{
+		"type": "greeting",
+		"data": {
+			"message" : "hello"
+		}
+	}`
+	
+	var worldMessage zoneHelper.WorldMessage
+	json.Unmarshal([]byte(jsonString),&worldMessage)
+
+	zoneHelper.SendMessage(c, []byte(jsonString))
 
 	// player disconnect block
+		
 	message := <-ch
 	if message == "done" {
 		// remove the player from the registry

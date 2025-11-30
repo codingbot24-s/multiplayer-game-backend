@@ -12,6 +12,10 @@ type MoveReq struct {
 	Y int
 }
 
+type Greeting struct {
+	Message string
+}
+
 /*
 	send the json websocket message like this
 	{
