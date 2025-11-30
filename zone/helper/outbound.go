@@ -7,11 +7,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-
-
 type WorldMessage struct {
-    Type string          `json:"type"`
-    Data json.RawMessage 
+	Type string `json:"type"`
+	Data json.RawMessage
 }
 
 func SendMessage(conn *websocket.Conn, data []byte) {
@@ -20,21 +18,28 @@ func SendMessage(conn *websocket.Conn, data []byte) {
 		fmt.Println("error unmarshalling world message")
 		return
 	}
-	var greeting Greeting
+
 	switch w_Message.Type {
 	case "greeting":
+		var greeting Greeting
 		if err := json.Unmarshal(w_Message.Data, &greeting); err != nil {
 			fmt.Println("error unmarshalling greeting")
 			return
 		}
-		fmt.Println("greeting ", greeting.Message)
-		break
+		err := conn.WriteJSON(greeting.Message)
+		if err != nil {
+			fmt.Println("error sending world message")
+			return
+		}
+	case "move":
+		var moveReq MoveReq
+		if err := json.Unmarshal(w_Message.Data, &moveReq); err != nil {
+			fmt.Println("error unmarshalling move request")
+			return
+		}
+		fmt.Println("move request ", moveReq.X, moveReq.Y)
 	default:
-		fmt.Println("message type is unknown")
+
 	}
-	err := conn.WriteJSON(w_Message)
-	if err != nil {
-		fmt.Println("error sending world message")
-		return
-	}
+
 }

@@ -46,3 +46,12 @@ func (r *Registry) Check() {
 
 	}
 }
+
+
+func(r *Registry) BuildSnapShot() *[]Player {
+	snapShot := make([]Player, 0)
+	for _, p := range r.Pmap {
+		snapShot = append(snapShot, *p)
+	}
+	return &snapShot
+}

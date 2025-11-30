@@ -6,7 +6,7 @@ type Player struct {
 	Name string
 	X 	int
 	Y 	int
-	Conn  *websocket.Conn
+	Conn  *websocket.Conn `json:"-"`
 }
 
 func NewPlayer(name string) *Player {

@@ -16,6 +16,11 @@ type Greeting struct {
 	Message string
 }
 
+
+type SnapShot struct {
+	Players []Player
+}
+
 /*
 	send the json websocket message like this
 	{

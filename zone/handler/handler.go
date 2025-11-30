@@ -44,32 +44,36 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		zoneHelper.HandleConnection(c, ch, name)
 	}()
-	/*
-	{
-		"type": "move",
-		"data ": {
-			"x": 0,	
-			
-		}	
-	
-	}
-	*/
-
-	//TODO: Test struct send world message to player
 	jsonString := `{
 		"type": "greeting",
 		"data": {
 			"message" : "hello"
 		}
 	}`
-	
+
 	var worldMessage zoneHelper.WorldMessage
-	json.Unmarshal([]byte(jsonString),&worldMessage)
+	json.Unmarshal([]byte(jsonString), &worldMessage)
+
+	zoneHelper.SendMessage(c, []byte(jsonString))
+	// build the snapshot data
+	snapShot := registry.BuildSnapShot()
+
+	// Marshal the snapshot to JSON
+	snapshotJSON, err := json.Marshal(snapShot)
+	if err != nil {
+		log.Printf("Error marshaling snapshot: %v", err)
+		return
+	}
+
+	jsonString = fmt.Sprintf(`{
+   	 	"type": "world_data",
+    	"data": %s
+	}`, string(snapshotJSON))
 
 	zoneHelper.SendMessage(c, []byte(jsonString))
 
 	// player disconnect block
-		
+
 	message := <-ch
 	if message == "done" {
 		// remove the player from the registry
