@@ -15,8 +15,9 @@ var upgrader = websocket.Upgrader{}
 // connect to websocket server
 func Connect(w http.ResponseWriter, r *http.Request) {
 	//TODO: how can we put the middleware here?
+	//TODO: extract player name from claims
 
-	// temporary solution get from query from query param or we can get the token also 
+	// temporary solution get from query from query param or we can get the token also
 	name := r.URL.Query().Get("username")
 	fmt.Println("name is ", name)
 	if name == "" {
@@ -24,15 +25,13 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
 	// get the registry
 	registry := zoneHelper.GetZoneRegistry()
 	// add the player in the registry
 	registry.AddPlayer(name, zoneHelper.NewPlayer(name))
 	fmt.Println("player connected with name ", name)
-	// check the registry 
+	// check the registry
 	registry.Check()
-
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -40,13 +39,13 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: extract player name from claims
 	// this is a goroutine channel
 	ch := make(chan string)
 	go func() {
 		helper.HandleConnection(c, ch)
 	}()
 
+	// player disconnect block
 	message := <-ch
 	if message == "done" {
 		// remove the player from the registry
